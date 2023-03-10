@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { SanityProject } from "@sanity/client";
 import { client } from "../../util/client";
 import { ListDatasets } from "./datasets/ListDatasets";
+import { ListMembers } from "./members/ListMembers";
 
 const cache = new Cache();
 
@@ -40,11 +41,11 @@ export function ProjectList() {
                     target={
                       <List>
                         <List.Item
-                          title="Open in sanity.io/manage"
+                          title="Go to project in sanity.io/manage"
                           actions={
                             <ActionPanel>
                               <Action.OpenInBrowser
-                                title="Open in sanity.io/manage"
+                                title="Go to Project in sanity.io/manage"
                                 url={`https://www.sanity.io/manage/project/${project.id}`}
                               />
                             </ActionPanel>
@@ -52,7 +53,7 @@ export function ProjectList() {
                         />
                         {project.studioHost && (
                           <List.Item
-                            title={`Open ${project.studioHost}.sanity.studio`}
+                            title={`Open Sanity Studio (${project.studioHost}.sanity.studio)`}
                             actions={
                               <ActionPanel>
                                 <Action.OpenInBrowser
@@ -64,38 +65,15 @@ export function ProjectList() {
                           />
                         )}
                         <List.Item
-                          title="Project Members"
+                          title="View Project Members"
                           actions={
                             <ActionPanel>
-                              <Action.Push
-                                title="Project Members"
-                                target={
-                                  <List filtering={true}>
-                                    {project.members &&
-                                      project.members.map((member) => {
-                                        return (
-                                          <List.Item
-                                            key={member.id}
-                                            title={member.id}
-                                            actions={
-                                              <ActionPanel>
-                                                <Action.OpenInBrowser
-                                                  title="Open in sanity.io/manage"
-                                                  url={`https://www.sanity.io/manage/project/${project.id}`}
-                                                />
-                                              </ActionPanel>
-                                            }
-                                          ></List.Item>
-                                        );
-                                      })}
-                                  </List>
-                                }
-                              />
+                              <Action.Push title="Project Members" target={<ListMembers project={project} />} />
                             </ActionPanel>
                           }
                         />
                         <List.Item
-                          title="Datasets"
+                          title="View Project Datasets"
                           actions={
                             <ActionPanel>
                               <Action.Push title="Datasets" target={<ListDatasets project={project} />} />
