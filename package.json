@@ -11,16 +11,7 @@
       "name": "index",
       "title": "Sanity Project Management",
       "description": "Template for showing a static list and a detail view",
-      "mode": "view",
-      "preferences": [
-        {
-          "name": "sanityUserToken",
-          "title": "Sanity User Token",
-          "description": "Your Sanity user token",
-          "type": "password",
-          "required": true
-        }
-      ]
+      "mode": "view"
     }
   ],
   "dependencies": {
