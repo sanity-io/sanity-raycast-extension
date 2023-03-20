@@ -1,7 +1,7 @@
 import { ActionPanel, List, Action } from "@raycast/api";
-import { ProjectList } from "./ProjectList";
+import { ProjectList } from "./actions/projects/ProjectList";
 
-export const ShowProjectsListItem = () => {
+export const SanityExtension = () => {
   return (
     <>
       <List.Item
@@ -13,7 +13,7 @@ export const ShowProjectsListItem = () => {
           </ActionPanel>
         }
       />
-      <List.Item
+      {/* <List.Item
         icon="list-icon.png"
         title="Create a New Sanity Studio"
         actions={
@@ -21,7 +21,7 @@ export const ShowProjectsListItem = () => {
             <Action title="Create a New Studio" onAction={() => null} />
           </ActionPanel>
         }
-      />
+      /> */}
     </>
   );
 };
