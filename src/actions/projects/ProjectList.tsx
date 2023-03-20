@@ -1,10 +1,12 @@
-import { List, Cache, ActionPanel, Action } from "@raycast/api";
+import { List, Cache, ActionPanel, Action, Icon } from "@raycast/api";
 
 import { useEffect, useState } from "react";
 import { SanityProject } from "@sanity/client";
 import { client } from "../../util/client";
 import { ListDatasets } from "./datasets/ListDatasets";
 import { ListMembers } from "./members/ListMembers";
+import { ListCorsOrigins } from "./cors/ListCorsOrigins";
+import { AddCorsOrigin } from "./cors/AddCorsOrigin";
 
 const cache = new Cache();
 
@@ -41,7 +43,8 @@ export function ProjectList() {
                     target={
                       <List>
                         <List.Item
-                          title="Go to project in sanity.io/manage"
+                          title="Go to Project in sanity.io/manage"
+                          icon={Icon.Globe}
                           actions={
                             <ActionPanel>
                               <Action.OpenInBrowser
@@ -54,6 +57,7 @@ export function ProjectList() {
                         {project.studioHost && (
                           <List.Item
                             title={`Open Sanity Studio (${project.studioHost}.sanity.studio)`}
+                            icon={Icon.AppWindowSidebarLeft}
                             actions={
                               <ActionPanel>
                                 <Action.OpenInBrowser
@@ -66,6 +70,7 @@ export function ProjectList() {
                         )}
                         <List.Item
                           title="View Project Members"
+                          icon={Icon.Person}
                           actions={
                             <ActionPanel>
                               <Action.Push title="Project Members" target={<ListMembers project={project} />} />
@@ -74,12 +79,28 @@ export function ProjectList() {
                         />
                         <List.Item
                           title="View Project Datasets"
+                          icon={Icon.Coins}
                           actions={
                             <ActionPanel>
                               <Action.Push title="Datasets" target={<ListDatasets project={project} />} />
                             </ActionPanel>
                           }
                         />
+                        <List.Item
+                          title="View CORS Origins"
+                          icon={Icon.Switch}
+                          actions={
+                            <ActionPanel>
+                              <Action.Push title="CORS Origins" target={<ListCorsOrigins project={project} />} />
+                              <Action.Push title="Add CORS Origin" target={<AddCorsOrigin project={project} />} />
+                            </ActionPanel>
+                          }
+                        />
+                        {/* <List.Item title="Delete Project" icon={Icon.Warning}>
+                          <ActionPanel>
+                            <Action title="Delete Project" onAction={() => console.log("Delete Project")} />
+                          </ActionPanel>
+                        </List.Item> */}
                       </List>
                     }
                   />
