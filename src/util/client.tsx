@@ -27,7 +27,7 @@ if (!token) {
 
 export const client: SanityClient = createClient({
   apiVersion: "2023-03-08",
-  requestTagPrefix: "raycast.sanity",
+  //requestTagPrefix: "raycast.sanity",
   token,
   useProjectHostname: false,
   useCdn: false,
