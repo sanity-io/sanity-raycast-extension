@@ -9,7 +9,7 @@
   "commands": [
     {
       "name": "index",
-      "title": "Sanity Project Management",
+      "title": "Sanity",
       "description": "Template for showing a static list and a detail view",
       "mode": "view"
     }
