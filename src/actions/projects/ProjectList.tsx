@@ -54,16 +54,13 @@ export function ProjectList() {
                             </ActionPanel>
                           }
                         />
-                        {project.studioHost && (
+                        {project.metadata.externalStudioHost && (
                           <List.Item
-                            title={`Open Sanity Studio (${project.studioHost}.sanity.studio)`}
+                            title={`Open Sanity Studio (${project.metadata.externalStudioHost})`}
                             icon={Icon.AppWindowSidebarLeft}
                             actions={
                               <ActionPanel>
-                                <Action.OpenInBrowser
-                                  title="Open Studio"
-                                  url={`https://${project.studioHost}.sanity.studio`}
-                                />
+                                <Action.OpenInBrowser title="Open Studio" url={project.metadata.externalStudioHost} />
                               </ActionPanel>
                             }
                           />
