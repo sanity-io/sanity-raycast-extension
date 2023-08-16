@@ -11,7 +11,7 @@ export function ListCorsOrigins(props: { project: SanityProject }) {
   const client = projectClient(project.id);
   const [origins, setOrigins] = useState<any[] | null>(null);
 
-  const deleteOriginHandler = async ({ id }) => {
+  const deleteOriginHandler = async ({ id }: { id: string }) => {
     const deletedOrigin = await client
       .request({ url: `/cors/${id}`, method: "DELETE" })
       .catch((err) => console.log(err));
