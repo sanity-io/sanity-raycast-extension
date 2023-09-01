@@ -14,6 +14,8 @@ npx sanity login
 
 You can access this extension by typing “sanity” in the Raycast panel.
 
+The configuration file where Sanity CLI stores your token is by default located at _~/.config/sanity/config.json_.
+
 ## Features
 
 As of now, there is only one top-level feature called “Your projects”. Under individual projects, you will find functionality via Raycast's “Action panel" (invoke it with `cmd + K`) and by drilling down the different selections. For individual projects, you currently have the following features:

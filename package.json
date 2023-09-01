@@ -16,9 +16,11 @@
   ],
   "dependencies": {
     "@raycast/api": "^1.48.8",
+    "@raycast/utils": "^1.9.1",
     "@sanity/cli": "^3.6.0",
     "@sanity/client": "^5.2.2",
-    "configstore": "^6.0.0"
+    "configstore": "^6.0.0",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@raycast/eslint-config": "1.0.5",
