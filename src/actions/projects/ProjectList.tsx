@@ -46,8 +46,6 @@ export function ProjectList() {
     [organizations, selectedOrganizationId]
   );
 
-  console.log(selectedOrganizationId);
-
   return (
     <List
       filtering={true}
