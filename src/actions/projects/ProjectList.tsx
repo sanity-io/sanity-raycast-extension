@@ -10,18 +10,24 @@ import { ListCorsOrigins } from "./cors/ListCorsOrigins";
 import { AddCorsOrigin } from "./cors/AddCorsOrigin";
 import { Organizations } from "../../types/organization";
 import CreateProject from "./CreateProject";
+import { OrganizationFilterDropdown } from "./OrganizationFilterDropdown";
 
 const cache = new Cache();
 
 export function ProjectList() {
-  const {
-    isLoading: isLoadingProjects,
-    data: projects = [],
-  } = useFetch<SanityProject[]>("https://api.sanity.io/v2021-06-07/projects?includeOrganizationProjects=true", {
-    headers: {
-      Authorization: `Bearer ${getAccessToken()}`,
-    },
-  });
+  const [selectedOrganizationId, setSelectedOrganizationId] = useState<string>("all");
+  const onOrganizationFilterChange = (newOrganizationFilter: string) => {
+    setSelectedOrganizationId(newOrganizationFilter);
+  };
+
+  const { isLoading: isLoadingProjects, data: projects = [] } = useFetch<SanityProject[]>(
+    "https://api.sanity.io/v2021-06-07/projects?includeOrganizationProjects=true",
+    {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    }
+  );
   const { isLoading: isLoadingOrganizations, data: organizations = [] } = useFetch<Organizations>(
     "https://api.sanity.io/v2021-06-07/organizations",
     {
@@ -32,9 +38,27 @@ export function ProjectList() {
   );
 
   const personalProjects = useMemo(() => projects.filter((project) => project.organizationId === null), [projects]);
+  const selectedOrganizations = useMemo(
+    () =>
+      selectedOrganizationId === "all"
+        ? organizations
+        : organizations.filter((organization) => organization.id === selectedOrganizationId),
+    [organizations, selectedOrganizationId]
+  );
+
+  console.log(selectedOrganizationId);
 
   return (
-    <List filtering={true} isLoading={isLoadingProjects || isLoadingOrganizations}>
+    <List
+      filtering={true}
+      isLoading={isLoadingProjects || isLoadingOrganizations}
+      searchBarAccessory={
+        <OrganizationFilterDropdown
+          organizations={organizations}
+          onOrganizationFilterChange={onOrganizationFilterChange}
+        />
+      }
+    >
       <List.Item
         title="Create project"
         icon={Icon.Plus}
@@ -44,7 +68,7 @@ export function ProjectList() {
           </ActionPanel>
         }
       />
-      {personalProjects.length > 0 && (
+      {personalProjects.length > 0 && ["all", "personal"].includes(selectedOrganizationId) && (
         <List.Section key={"personal"} title="Personal">
           {projects
             .filter((project) => project.organizationId === null)
@@ -53,7 +77,7 @@ export function ProjectList() {
             ))}
         </List.Section>
       )}
-      {organizations.map((organization) => (
+      {selectedOrganizations.map((organization) => (
         <List.Section key={organization.id} title={organization.name}>
           {projects
             .filter((project) => project.organizationId === organization.id)
