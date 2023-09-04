@@ -13,7 +13,6 @@ interface Values {
 
 export default function CreateProject() {
   const { pop } = useNavigation();
-  const [isCreating, setIsCreateing] = useState(false);
   const [nameError, setNameError] = useState<string | undefined>();
   const { isLoading: isLoadingOrganizations, data: organizations = [] } = useFetch<Organizations>(
     "https://api.sanity.io/v2021-06-07/organizations",
@@ -60,13 +59,13 @@ export default function CreateProject() {
         return response;
       }
     },
-    [setIsCreateing]
+    []
   );
 
   const handleCreate = useCallback(
     async (values: Values) => {
       await createProjectCall(values);
-      
+
       popToRoot();
     },
     [createProjectCall]
@@ -96,7 +95,7 @@ export default function CreateProject() {
 
   return (
     <Form
-      isLoading={isLoadingOrganizations || isCreating}
+      isLoading={isLoadingOrganizations}
       navigationTitle="Create a Sanity project"
       actions={
         <ActionPanel>
