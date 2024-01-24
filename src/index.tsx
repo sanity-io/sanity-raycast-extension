@@ -1,5 +1,3 @@
-import { List } from "@raycast/api";
-import { SanityExtension } from "./SanityExtension";
 import { token, tokenError } from "./util/client";
 import { ProjectList } from "./actions/projects/ProjectList";
 
