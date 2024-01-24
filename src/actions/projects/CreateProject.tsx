@@ -1,4 +1,4 @@
-import { ActionPanel, Action, Form, useNavigation, popToRoot, showToast, Toast } from "@raycast/api";
+import { ActionPanel, Action, Form, popToRoot, showToast, Toast } from "@raycast/api";
 import { useFetch, runAppleScript } from "@raycast/utils";
 import { useCallback, useState } from "react";
 import { Organizations } from "../../types/organization";
@@ -8,11 +8,11 @@ import fetch from "node-fetch";
 
 interface Values {
   displayName: string;
+  privateDataset: boolean;
   organizationId?: string;
 }
 
 export default function CreateProject() {
-  const { pop } = useNavigation();
   const [nameError, setNameError] = useState<string | undefined>();
   const { isLoading: isLoadingOrganizations, data: organizations = [] } = useFetch<Organizations>(
     "https://api.sanity.io/v2021-06-07/organizations",
@@ -24,7 +24,7 @@ export default function CreateProject() {
   );
 
   const createProjectCall: (values: Values) => Promise<SanityProject | undefined> = useCallback(
-    async ({ displayName, organizationId }: Values) => {
+    async ({ displayName, organizationId, privateDataset = true }: Values) => {
       let response;
 
       showToast({
@@ -33,7 +33,7 @@ export default function CreateProject() {
       });
 
       try {
-        response = (await fetch("https://api.sanity.io/v2021-06-07/projects", {
+        response = await fetch("https://api.sanity.io/v2021-06-07/projects", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${getAccessToken()}`,
@@ -43,7 +43,19 @@ export default function CreateProject() {
             displayName,
             ...(organizationId && organizationId !== "" ? { organizationId } : {}),
           }),
-        }).then((response) => response.json())) as Promise<SanityProject>;
+        }).then((response) => response.json()) as SanityProject;
+
+        
+        await fetch(`https://api.sanity.io/v2021-06-07/projects/${response.id}/datasets/production`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${getAccessToken()}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            aclMode: privateDataset ? 'private' : 'public',
+          }),
+        }).then((response) => response.json())
 
         showToast({
           style: Toast.Style.Success,
@@ -112,7 +124,7 @@ export default function CreateProject() {
         onChange={dropNameErrorIfNeeded}
         onBlur={(event) => {
           if (event.target.value?.length == 0) {
-            setNameError("The field should't be empty!");
+            setNameError("Please fill out Project name");
           } else {
             dropNameErrorIfNeeded();
           }
@@ -124,10 +136,7 @@ export default function CreateProject() {
           <Form.Dropdown.Item key={organization.id} value={organization.id} title={organization.name} />
         ))}
       </Form.Dropdown>
+      <Form.Checkbox id="privateDataset" label="Private dataset" defaultValue={true} info="By default datasets is public. If enabled, this will make the dataset private." />
     </Form>
   );
-}
-
-function validatePassword(value: string): boolean {
-  return value.length >= 8;
 }
