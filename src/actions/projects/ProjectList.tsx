@@ -95,6 +95,23 @@ function ProjectItem({ project }: { project: SanityProject }) {
       title={project.displayName}
       actions={
         <ActionPanel>
+          <ActionPanel.Section key="manage" title="Manage">
+            <Action.OpenInBrowser
+              title="Go to Project in sanity.io/manage"
+              url={`https://www.sanity.io/manage/project/${project.id}`}
+            />
+            {project.metadata.externalStudioHost && (
+              <List.Item
+                title={`Open Sanity Studio (${project.metadata.externalStudioHost})`}
+                icon={Icon.AppWindowSidebarLeft}
+                actions={
+                  <ActionPanel>
+                    <Action.OpenInBrowser title="Open Studio" url={project.metadata.externalStudioHost} />
+                  </ActionPanel>
+                }
+              />
+            )}
+          </ActionPanel.Section>
           <Action.Push
             title="Open Project"
             target={
