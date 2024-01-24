@@ -9,8 +9,14 @@
   "commands": [
     {
       "name": "index",
-      "title": "Sanity",
-      "description": "Template for showing a static list and a detail view",
+      "title": "Manage Projects",
+      "description": "List and manage your Sanity projects",
+      "mode": "view"
+    },
+    {
+      "name": "createProject",
+      "title": "Create Project",
+      "description": "Create a Sanity project",
       "mode": "view"
     }
   ],
