@@ -38,3 +38,7 @@ export const projectClient = (projectId: string): SanityClient =>
     projectId,
     useProjectHostname: true,
   });
+
+export function getAccessToken() {
+  return token;
+}
