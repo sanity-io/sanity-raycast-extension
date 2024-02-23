@@ -1,9 +1,8 @@
-import { List, Cache, ActionPanel, Action, Icon, LaunchProps } from "@raycast/api";
+import { List, ActionPanel, Action, Icon, Color } from "@raycast/api";
 import { useFetch } from "@raycast/utils";
-
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { SanityProject } from "@sanity/client";
-import { client, getAccessToken } from "../../util/client";
+import { getAccessToken } from "../../util/client";
 import { ListDatasets } from "./datasets/ListDatasets";
 import { ListMembers } from "./members/ListMembers";
 import { ListCorsOrigins } from "./cors/ListCorsOrigins";
@@ -12,7 +11,11 @@ import { Organizations } from "../../types/organization";
 import CreateProject from "./CreateProject";
 import { OrganizationFilterDropdown } from "./OrganizationFilterDropdown";
 
-const cache = new Cache();
+const COLORS = [Color.Green, Color.Orange, Color.Yellow, Color.Purple, Color.Blue, Color.Red, Color.Magenta];
+
+function getTagColor(index: number) {
+  return COLORS[index % COLORS.length];
+}
 
 export function ProjectList() {
   const [selectedOrganizationId, setSelectedOrganizationId] = useState<string>("all");
@@ -38,6 +41,17 @@ export function ProjectList() {
   );
 
   const personalProjects = useMemo(() => projects.filter((project) => project.organizationId === null), [projects]);
+  const hasPersonalProjects = personalProjects.length > 0;
+  const personalTagColor = useMemo(() => getTagColor(0), []);
+  const orgIdColorMap = useMemo(() => {
+    const map = new Map<string, Color>();
+    organizations.forEach((org, index) => {
+      const color = getTagColor(hasPersonalProjects ? index + 1 : index);
+      map.set(org.id, color);
+    });
+    return map;
+  }, [hasPersonalProjects, organizations]);
+
   const selectedOrganizations = useMemo(
     () =>
       selectedOrganizationId === "all"
@@ -71,7 +85,7 @@ export function ProjectList() {
           {projects
             .filter((project) => project.organizationId === null)
             .map((project) => (
-              <ProjectItem key={project.id} project={project} />
+              <ProjectItem key={project.id} project={project} tagColor={personalTagColor} />
             ))}
         </List.Section>
       )}
@@ -80,7 +94,7 @@ export function ProjectList() {
           {projects
             .filter((project) => project.organizationId === organization.id)
             .map((project) => (
-              <ProjectItem key={project.id} project={project} />
+              <ProjectItem key={project.id} project={project} tagColor={orgIdColorMap.get(organization.id)!} />
             ))}
         </List.Section>
       ))}
@@ -88,11 +102,13 @@ export function ProjectList() {
   );
 }
 
-function ProjectItem({ project }: { project: SanityProject }) {
+function ProjectItem({ project, tagColor }: { project: SanityProject; tagColor: Color }) {
   return (
     <List.Item
       key={project.id}
+      keywords={[project.id]}
       title={project.displayName}
+      accessories={[{ tag: { value: project.id, color: tagColor } }]}
       actions={
         <ActionPanel>
           <ActionPanel.Section key="manage" title="Manage">
@@ -100,6 +116,7 @@ function ProjectItem({ project }: { project: SanityProject }) {
               title="Go to Project in sanity.io/manage"
               url={`https://www.sanity.io/manage/project/${project.id}`}
             />
+            <Action.CopyToClipboard title="Copy project ID" content={project.id} icon={Icon.Clipboard} />
             {project.metadata.externalStudioHost && (
               <List.Item
                 title={`Open Sanity Studio (${project.metadata.externalStudioHost})`}
@@ -167,11 +184,6 @@ function ProjectItem({ project }: { project: SanityProject }) {
                     </ActionPanel>
                   }
                 />
-                {/* <List.Item title="Delete Project" icon={Icon.Warning}>
-              <ActionPanel>
-                <Action title="Delete Project" onAction={() => console.log("Delete Project")} />
-              </ActionPanel>
-            </List.Item> */}
               </List>
             }
           />
