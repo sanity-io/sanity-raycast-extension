@@ -59,9 +59,19 @@ export function ProjectList() {
         : organizations.filter((organization) => organization.id === selectedOrganizationId),
     [organizations, selectedOrganizationId]
   );
+  const searchBarPlaceholder = useMemo(() => {
+    if (selectedOrganizationId === "personal") {
+      return `Search personal projects...`;
+    }
+    if (selectedOrganizationId === "all" || selectedOrganizations.length === 0) {
+      return `Search projects...`;
+    }
+    return `Search projects in ${selectedOrganizations[0].name}`;
+  }, [selectedOrganizationId]);
 
   return (
     <List
+      searchBarPlaceholder={searchBarPlaceholder}
       filtering={true}
       isLoading={isLoadingProjects || isLoadingOrganizations}
       searchBarAccessory={
